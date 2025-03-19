@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<html>
+<head>
+    <title>Список задач</title>
+    <meta charset="UTF-8">
+</head>
+
+<body>
+    <h2>Список задач</h2>
+    <a href="/tasks/todo">Показать TODO</a>
+    <a href="/tasks/done">Показать DONE</a>
+
+    <ul>
+        <li th:each="task : ${tasks}">
+            <b th:text="${task.title}"></b>
+            <p th:text="${task.description}"></p>
+            <span th:text="${task.status}"></span>
+            <form th:action="@{/tasks/update}" method="post">
+                <input type="hidden" th:value="${task.id}" name="id"/>
+                <button type="submit">Сделать DONE</button>
+            </form>
+            <form th:action="@{/tasks/delete}" method="post">
+                <input type="hidden" th:value="${task.id}" name="id"/>
+                <button type="submit">Удалить</button>
+            </form>
+        </li>
+    </ul>
+
+    <h3>Добавить новую задачу</h3>
+    <form th:action="@{/tasks/add}" method="post">
+        <label for="title">Название:</label>
+        <input type="text" id="title" name="title" required/>
+        <label for="description">Описание:</label>
+        <input type="text" id="description" name="description" required/>
+        <button type="submit">Добавить</button>
+    </form>
+</body>
+</html>

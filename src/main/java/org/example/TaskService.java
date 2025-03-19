@@ -1,11 +1,17 @@
 package org.example;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
+@Service
 public class TaskService {
     private final TaskRepository taskRepository;
 
+    @Autowired
     public TaskService (TaskRepository taskRepository) {
         this.taskRepository = taskRepository;
     }
@@ -22,35 +28,45 @@ public class TaskService {
     }
 
     public void updateTask(long id) {
-        Task task = taskRepository.findById(id);
-        if (task == null) {
-            System.out.println("Задача не найдена");
-            return;
-        }
-        if ("DONE".equals(task.getStatus())) {
-            System.out.println("Эта задача уже завершена!");
-            return;
-        }
-        task.setStatus("DONE");
-        taskRepository.update(task);
-        System.out.println("Задача выполнена");
+        taskRepository.findById(id).ifPresentOrElse(task -> {
+            if ("DONE".equals(task.getStatus())) {
+                System.out.println("Эта задача уже завершена!");
+            } else {
+                task.setStatus("DONE");
+                taskRepository.save(task);
+                System.out.println("Задача выполнена");
+            }
+        }, () -> System.out.println("Задача не найдена"));
     }
 
     public void deleteTask(long id) {
-        Task task = taskRepository.findById(id);
-        if (task == null) {
-            System.out.println("Задача не найдена");
-            return;
-        }
-        taskRepository.delete(task);
-        System.out.println("Задача удалена");
+        taskRepository.findById(id).ifPresentOrElse(task -> {
+            taskRepository.delete(task);
+            System.out.println("Задача удалена");
+        }, () -> System.out.println("Задача не найдена"));
     }
 
-    public void printAllTasksByStatus() {
-        List<Task> tasksList = taskRepository.findAllByStatus();
+    public void printAllTasksDone() {
+        List<Task> tasksList = taskRepository.findAllByStatus("DONE");
 
         for (Task task : tasksList) {
             System.out.println(task.toString());
         }
+    }
+
+    public void printAllTasksTodo() {
+        List<Task> tasksList = taskRepository.findAllByStatus("TODO");
+
+        for (Task task : tasksList) {
+            System.out.println(task.toString());
+        }
+    }
+
+    public List<Task> getAllTasksByStatus(String status) {
+        return taskRepository.findAllByStatus(status);
+    }
+
+    public List<Task> getAllTasks() {
+        return taskRepository.findAll();
     }
 }

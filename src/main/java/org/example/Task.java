@@ -9,12 +9,12 @@ import java.time.LocalDateTime;
 public class Task {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
-    @Column
+    private Long id;
+    @Column(nullable = false)
     private String title;
     @Column
     private String description;
-    @Column
+    @Column(nullable = false)
     private String status;
     @Column(name = "date_time")
     private LocalDateTime dateTime;
@@ -37,7 +37,7 @@ public class Task {
         this.dateTime = LocalDateTime.now();
     }
 
-    public long getId() {
+    public Long getId() {
         return id;
     }
 

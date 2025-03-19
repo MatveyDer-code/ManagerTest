@@ -43,3 +43,4 @@ bin/
 
 /src/main/java/org/example/DataBaseConnection.java
 src/main/resources/hibernate.cfg.xml
+src/main/resources/application.properties
